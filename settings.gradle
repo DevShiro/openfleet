@@ -1,4 +1,6 @@
 rootProject.name = 'openfleet'
 include 'openfleet-common'
 include 'openfleet-docs'
+include 'openfleet-corda-contracts'
+include 'openfleet-corda-workflows'
 
