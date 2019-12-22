@@ -13,8 +13,6 @@ buildscript {
     }
 }
 
-import net.corda.plugins.Cordform
-
 apply plugin: 'java'
 apply plugin: 'net.corda.plugins.cordapp'
 apply plugin: 'net.corda.plugins.cordformation'
@@ -73,18 +71,6 @@ sourceSets {
             java.outputDir = file('bin/test')
         }
     }
-    integrationTest {
-        java {
-            compileClasspath += main.output + test.output
-            runtimeClasspath += main.output + test.output
-            srcDir file('src/integration-test/java')
-        }
-    }
-}
-
-configurations {
-    integrationTestImplementation.extendsFrom testImplementation
-    integrationTestRuntimeOnly.extendsFrom testRuntimeOnly
 }
 
 dependencies {
@@ -105,37 +91,4 @@ dependencies {
 
     compileOnly "org.projectlombok:lombok:${LOMBOK_VERSION}"
     annotationProcessor "org.projectlombok:lombok:${LOMBOK_VERSION}"
-}
-
-task integrationTest(type: Test, dependsOn: []) {
-    testClassesDirs = sourceSets.integrationTest.output.classesDirs
-    classpath = sourceSets.integrationTest.runtimeClasspath
-}
-
-task deployNodes(type: Cordform, dependsOn: ['jar']) {
-    nodeDefaults {
-        cordapp project(":openfleet-corda-contracts")
-    }
-    node {
-        name "O=Notary,L=Budapest,C=HU"
-        notary = [validating : false]
-        p2pPort 10000
-        rpcSettings {
-            address("localhost:10001")
-            adminAddress("localhost:10002")
-        }
-        projectCordapp {
-            deploy = false
-        }
-        cordapps.clear()
-    }
-    node {
-        name "O=PartyA,L=Budapest,C=HU"
-        p2pPort 10004
-        rpcSettings {
-            address("localhost:10005")
-            adminAddress("localhost:10006")
-        }
-        rpcUsers = [[user: "user1", "password": "test", "permissions": ["ALL"]]]
-    }
 }
