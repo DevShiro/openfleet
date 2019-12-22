@@ -1,0 +1,4 @@
+rootProject.name = 'openfleet'
+include 'openfleet-common'
+include 'openfleet-docs'
+
