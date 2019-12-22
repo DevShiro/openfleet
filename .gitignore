@@ -1,3 +1,7 @@
 .gradle
 .idea
-/build/
+build/
+out/
+bin/
+lib/
+logs/

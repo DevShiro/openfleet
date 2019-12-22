@@ -1,0 +1,94 @@
+buildscript {
+    repositories {
+        mavenCentral()
+        jcenter()
+        maven {
+            url 'https://ci-artifactory.corda.r3cev.com/artifactory/corda-releases'
+        }
+    }
+    dependencies {
+        classpath "net.corda.plugins:cordapp:${CORDAPP_PLUGINS_VERSION}"
+        classpath "net.corda.plugins:cordformation:${CORDAPP_PLUGINS_VERSION}"
+        classpath "net.corda.plugins:quasar-utils:${CORDAPP_PLUGINS_VERSION}"
+    }
+}
+
+apply plugin: 'java'
+apply plugin: 'net.corda.plugins.cordapp'
+apply plugin: 'net.corda.plugins.cordformation'
+apply plugin: 'net.corda.plugins.quasar-utils'
+
+task installQuasar(type: Copy) {
+    destinationDir rootProject.file("lib")
+    from(configurations.quasar) {
+        rename 'quasar-core(.*).jar', 'quasar.jar'
+    }
+}
+
+// todo: All corda related config and dependency stuff should be moved to separate plugin
+configurations {
+    compile {
+        // We want to use SLF4J's version of these bindings: jcl-over-slf4j
+        // Remove any transitive dependency on Apache's version.
+        exclude group: 'commons-logging', module: 'commons-logging'
+    }
+}
+
+tasks.withType(JavaCompile) {
+    options.compilerArgs << "-parameters" // Required for shell commands.
+}
+
+jar {
+    // CorDapps do not configure a Node's logging.
+    exclude '**/log4j2*.xml'
+    baseName 'openfleet-cordapp-contracts'
+}
+
+cordapp {
+    targetPlatformVersion 5
+    minimumPlatformVersion 4
+    workflow {
+        name "Openfleet Workflow"
+        vendor "DevShiro"
+        licence "TBD"
+        versionId 1
+    }
+}
+
+sourceSets {
+    main {
+        java {
+            srcDir 'src/main/java'
+            java.outputDir = file('bin/main')
+        }
+        resources {
+            srcDir "../config/dev"
+        }
+    }
+    test{
+        java {
+            srcDir 'src/test/java'
+            java.outputDir = file('bin/test')
+        }
+    }
+}
+
+dependencies {
+    testImplementation "junit:junit:${JUNIT_VERSION}"
+    testImplementation "org.assertj:assertj-core:3.11.1"
+
+    // Corda dependencies.
+    cordaCompile "net.corda:corda-core:${CORDA_VERSION}"
+    cordaCompile "net.corda:corda-jackson:${CORDA_VERSION}"
+    cordaCompile "net.corda:corda-rpc:${CORDA_VERSION}"
+    cordaRuntime "net.corda:corda:${CORDA_VERSION}"
+
+    testImplementation "net.corda:corda-node-driver:${CORDA_VERSION}"
+    cordaRuntime "org.apache.logging.log4j:log4j-slf4j-impl:${LOG4J_VERSION}"
+
+    // CorDapp dependencies.
+    cordapp project(":openfleet-corda-contracts")
+
+    compileOnly "org.projectlombok:lombok:${LOMBOK_VERSION}"
+    annotationProcessor "org.projectlombok:lombok:${LOMBOK_VERSION}"
+}
