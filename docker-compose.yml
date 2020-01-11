@@ -1,0 +1,21 @@
+# Development environment setup using docker-compose.
+# Do not use it in production. See openfleet-deployment for production use.
+version: '3'
+services:
+  db:
+    image: postgres:12
+    restart: always
+    ports:
+    - "5432:5432"
+    environment:
+      POSTGRES_USER: openfleet
+      POSTGRES_DB: openfleet-db
+      POSTGRES_PASSWORD: password # Do NOT use this for production.
+
+  service-ui:
+    depends_on:
+      - db
+    image: openfleet-service-ui:0.1
+    restart: always
+    ports:
+    - "8080:8080"
