@@ -1,0 +1,82 @@
+import net.corda.plugins.Cordform
+
+buildscript {
+    repositories {
+        mavenCentral()
+        jcenter()
+        maven {
+            url 'https://ci-artifactory.corda.r3cev.com/artifactory/corda-releases'
+        }
+    }
+    dependencies {
+        classpath "net.corda.plugins:cordapp:${CORDAPP_PLUGINS_VERSION}"
+        classpath "net.corda.plugins:cordformation:${CORDAPP_PLUGINS_VERSION}"
+        classpath "net.corda.plugins:quasar-utils:${CORDAPP_PLUGINS_VERSION}"
+    }
+}
+
+apply plugin: 'java'
+apply plugin: 'net.corda.plugins.cordapp'
+apply plugin: 'net.corda.plugins.cordformation'
+apply plugin: 'net.corda.plugins.quasar-utils'
+
+dependencies {
+    compile "net.corda:corda:${CORDA_VERSION}"
+    compile "net.corda:corda-node-api:${CORDA_VERSION}"
+
+    cordapp project(":openfleet-corda-workflows")
+    cordapp project(":openfleet-corda-contracts")
+
+}
+
+
+task deployNodes(type: Cordform, dependsOn: ['jar']) {
+    nodeDefaults {
+        cordapp project(":openfleet-corda-contracts")
+        cordapp project(":openfleet-corda-workflows")
+    }
+    node {
+        name "O=Notary,L=London,C=GB"
+        notary = [validating : false]
+        p2pPort 10000
+        h2Port 10003
+        rpcSettings {
+            address("localhost:10001")
+            adminAddress("localhost:10002")
+        }
+        projectCordapp {
+            deploy = false
+        }
+        cordapps.clear()
+    }
+    node {
+        name "O=PartyA,L=London,C=GB"
+        p2pPort 10004
+        h2Port 10007
+        rpcSettings {
+            address("localhost:10005")
+            adminAddress("localhost:10006")
+        }
+        rpcUsers = [[user: "user1", "password": "test", "permissions": ["ALL"]]]
+    }
+    node {
+        name "O=PartyB,L=New York,C=US"
+        p2pPort 10008
+        h2Port 10011
+        rpcSettings {
+            address("localhost:10009")
+            adminAddress("localhost:10010")
+        }
+        rpcUsers = [[user: "user1", "password": "test", "permissions": ["ALL"]]]
+    }
+    node {
+        name "O=PartyC,L=Paris,C=FR"
+        p2pPort 10012
+        h2Port 10015
+        rpcSettings {
+            address("localhost:10013")
+            adminAddress("localhost:10014")
+        }
+        rpcUsers = [[user: "user1", "password": "test", "permissions": ["ALL"]]]
+    }
+}

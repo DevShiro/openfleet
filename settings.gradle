@@ -5,4 +5,5 @@ include 'openfleet-corda-contracts'
 include 'openfleet-corda-workflows'
 include 'openfleet-service-ui'
 include 'openfleet-deployment'
+include 'openfleet-corda'
 

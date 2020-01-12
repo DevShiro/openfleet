@@ -41,7 +41,7 @@ tasks.withType(JavaCompile) {
 jar {
     // CorDapps do not configure a Node's logging.
     exclude '**/log4j2*.xml'
-    baseName 'openfleet-cordapp-contracts'
+    baseName 'openfleet-cordapp-workflows'
 }
 
 cordapp {
