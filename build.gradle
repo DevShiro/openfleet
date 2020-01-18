@@ -12,3 +12,16 @@ allprojects {
 subprojects {
     version = '0.1' //todo: Set up some kind of proper automated versioning
 }
+
+
+task buildCordaImage(type: Exec) {
+    dependsOn ':openfleet-corda-contracts:jar'
+    dependsOn ':openfleet-corda-workflows:jar'
+    copy {
+        from 'openfleet-corda-contracts/build/libs/openfleet-cordapp-contracts-0.1.jar'
+        from 'openfleet-corda-workflows/build/libs/openfleet-cordapp-workflows-0.1.jar'
+        into 'openfleet-corda/build/cordapp/'
+    }
+    workingDir 'openfleet-corda/'
+    commandLine 'docker', 'build', '-t', 'openfleet/corda:0.1', '.'
+}
