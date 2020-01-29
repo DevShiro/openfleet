@@ -2,6 +2,7 @@ package com.github.devshiro.openfleet.corda.schema.entity;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import net.corda.core.schemas.PersistentState;
 
 import javax.persistence.Column;
@@ -12,15 +13,16 @@ import java.util.UUID;
 @Entity
 @Table(name = "openfleet_example_entity")
 @AllArgsConstructor
+@NoArgsConstructor
 @Data
 public class ExampleEntity extends PersistentState {
 
     @Column(name = "issuer")
-    private final String issuer;
+    private String issuer;
 
     @Column(name = "value")
-    private final int value;
+    private int value;
 
     @Column(name = "linear_id")
-    private final UUID linearId;
+    private UUID linearId;
 }

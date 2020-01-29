@@ -21,7 +21,7 @@ dependencies {
     annotationProcessor 'org.projectlombok:lombok:1.18.10'
 
     implementation 'com.vaadin:vaadin-spring-boot-starter'
-    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    implementation 'org.hibernate:hibernate-core:5.3.15.Final'
 
     compile "net.corda:corda-rpc:${CORDA_VERSION}"
 
@@ -37,8 +37,7 @@ dependencies {
 
 dependencyManagement {
     imports {
-        mavenBom "com.vaadin:vaadin-bom:${vaadinVersion}"
-    }
+        mavenBom "com.vaadin:vaadin-bom:${vaadinVersion}"    }
 }
 
 jib {
